@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba técnica</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <h1>Prueba técnica:</h1>
+    <button id="btnImportar">Importar datos</button>
+    <br>
+    <div>
+        <table id="tblRegistros" border="1">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Contac_no</th>
+                    <th>Lastname</th>
+                    <th>Createdtime</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            $('#tblRegistros').hide()
+
+            $('#btnImportar').click(function () {
+                // Obtengo el token:
+                $.get(
+                    'https://develop.datacrm.la/anieto/anietopruebatecnica/webservice.php?operation=getchallenge&username=prueba',
+                    function (data1){
+                        var token = data1.result.token
+
+                        // Importo archivo js que me permite codificar Strings y generar un md5 con el token y la clave de acceso:
+                        $.getScript('codificador.js', function(){
+                            var accessKey = calcMD5(token + 'Vn4HOWtkJOsPX7t')
+
+                            // Inicio sesión y obtengo el sessionName:
+                            $.post('https://develop.datacrm.la/anieto/anietopruebatecnica/webservice.php',
+                                {
+                                    operation: "login",
+                                    username: "prueba",
+                                    accessKey: accessKey
+                                }, 
+                                function(data2){
+                                    // Realizo la consulta:
+                                    var sessionName = data2.result.sessionName
+                                    $.get(
+                                        `https://develop.datacrm.la/anieto/anietopruebatecnica/webservice.php?operation=query&sessionName=${sessionName}&query=select * from Contacts;`,
+                                        function(data3){
+                                            // Agrego los datos a la tabla:
+                                            var registros = data3.result
+                                            
+                                            $('#tblRegistros tbody').empty()
+
+                                            $.each(registros, function(indice, registro){
+                                            let fila = $('<tr>')
+                                            fila.append($(`<td>${registro.id}</td>`))
+                                            fila.append($(`<td>${registro.contact_no}</td>`))
+                                            fila.append($(`<td>${registro.lastname}</td>`))
+                                            fila.append($(`<td>${registro.createdtime}</td>`))
+
+                                            $('#tblRegistros tbody').append(fila)
+                                            })
+                                            
+                                            $('#tblRegistros').show()
+                                        }
+                                    )
+                                }
+                            )
+                        })                             
+                    }
+                )   
+            })                 
+        }) 
+    </script>
+</body>
+</html>

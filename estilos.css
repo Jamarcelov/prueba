@@ -1,0 +1,25 @@
+body{
+    font-family:Verdana, Tahoma, sans-serif;
+    color: rgb(35, 51, 70);
+}
+h1{
+    text-align: center;
+}
+button{
+    display:block;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(107, 151, 199);
+    border-color: rgb(107, 151, 199);
+    border-radius: 10px;
+    font-family:Verdana, Tahoma, sans-serif;
+    color: aliceblue;
+}
+table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: 2px solid;
+    margin-left: auto;
+    margin-right: auto;
+  }
